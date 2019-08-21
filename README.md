@@ -8,7 +8,7 @@ Step2 is the HASL postprocessing.
 
 Notice: 1. Three functions: setpar,batch_segment(PAR),batch_create_mask(PAR)(line11-13) in Step1 are not included in this
            repository because they are not mine, please refer to the 'batch_run.m' from zhengjun.
-           This three functions require sepacific data_path setting like '~/P01/MPRAGE/MPRAGE.nii' '~/S01/ASL/ASL.nii'
+           This three functions require sepacific data_path setting like '~/S01/ASL/ASL.nii'
            So my directories are also set in this way. All the results will be stored in an output folder under the subject
            directory. 
         2. For step2, I use ASL phase instead of the exact time to divide the different CO2 conditions. 
