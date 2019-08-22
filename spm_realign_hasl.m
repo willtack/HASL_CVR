@@ -1,4 +1,4 @@
-function spm_realign(M0_path, ASL_path)
+function spm_realign_hasl(M0_path, ASL_path)
 
 realign_data = {fullfile(M0_path,',1')};
 for i = 1:60  
