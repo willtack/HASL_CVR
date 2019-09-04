@@ -8,13 +8,13 @@
 %         Calculate CVR, save change and change% nii
 %--------------------------------------------------------------------------------------------------
 
-addpath /Users/tianyelin/Desktop/code_github/hasl_function
+addpath ~/hasl_function % code_dir
 
 normalCO2_state = [1:45];
 hyperCO2_state = [48:60];  % ASL phase numbers
 
 % % set path
-subj_folder = '/Users/tianyelin/Desktop/code_github/test_data/S02_20190624';
+subj_folder = '~/test_data/S02_20190624'; % data_dir
 
 hasl_asl_filename = 'rASL.nii';
 hasl_m0_filename = 'rM0.nii';
