@@ -5,7 +5,7 @@
 %          create resampled brainmask
 %--------------------------------------------------------------------------------------------------        
 
-subj_folder = '/Users/tianyelin/Desktop/code_github/test_data/S02_20190624'
+subj_folder = '~/test_data/S02_20190624' % data dir
 
 ASL_path = fullfile(subj_folder, 'ASL/ASL.nii');
 M0_path = fullfile(subj_folder, 'M0/M0.nii');
