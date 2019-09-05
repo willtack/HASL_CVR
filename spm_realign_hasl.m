@@ -1,8 +1,8 @@
-function spm_realign_hasl(M0_path, ASL_path)
+function spm_realign_hasl(M0_path, ASL_path, asl_phase_num)
 
 realign_data = {[M0_path,',1']
                 [M0_path,',2']};
-for i = 1:50  
+for i = 1:asl_phase_num  
     f = fullfile([ASL_path, ',', num2str(i)]);
     realign_data{i+2,1} = f;
 end
