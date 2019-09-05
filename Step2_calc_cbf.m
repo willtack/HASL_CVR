@@ -1,8 +1,8 @@
 
 %--------------------------------------------------------------------------------------------------
 % Step 2
-% Prep: Run step1
-%       Enter CO2 states according to the timeseries
+% Preparation: Run step1
+%              Enter CO2 states according to the timeseries
 % Purpose:Decode Hadamard matrix
 %         Calculate CBF, transit time and ttCBF in Baseline and HyperCO2 states, save nii
 %         Calculate CVR, save change and change% nii
