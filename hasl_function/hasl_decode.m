@@ -1,5 +1,3 @@
-% Default Decoding matrix will place min-PLD first and LL last
-
 function hasl_out = hasl_decode(hasl_in, asl_para)
 
     % % Prepare Decoding Matrix
@@ -8,34 +6,13 @@ function hasl_out = hasl_decode(hasl_in, asl_para)
         -1, 1;
         -1, 1];
     
-%     hasl_decode_mat3 = 1/8 * [... % 1st phase: label
-%         -3,  2,  3,  3, -5;
-%         -3,  2, -5,  3,  3;
-%         -3,  2,  3, -5,  3;
-%         -9,  6,  1,  1,  1];
-    
     hasl_decode_mat3 = 1/8 * [... % 1st phase: control
         2, -3,  3,  3, -5;
         2, -3, -5,  3,  3;
         2, -3,  3, -5,  3;
         6, -9,  1,  1,  1];
     
-%     hasl_decode_mat3 = 1/3 * [... % old version label first
-%         -1,  1,  1,  1, -2;
-%         -1,  1, -2,  1,  1;
-%         -1,  1,  1, -2,  1;
-%         -3,  3,  0,  0,  0];
-    
-    hasl_decode_mat7 = 1/32 * [...
-        -5,   4,  7,  7, -9,  7, -9, -9,  7;
-        -5,   4, -9,  7,  7,  7,  7, -9, -9;
-        -5,   4,  7, -9,  7,  7, -9,  7, -9;
-        -5,   4, -9, -9, -9,  7,  7,  7,  7;
-        -5,   4,  7,  7, -9, -9,  7,  7, -9;
-        -5,   4, -9,  7,  7, -9, -9,  7,  7;
-        -5,   4,  7, -9,  7, -9,  7, -9,  7;
-        -35, 28,  1,  1,  1,  1,  1,  1,  1];
-    
+
     state_num = asl_para.State_Num;
     pld_num = asl_para.PLD_Num;
     
@@ -45,8 +22,6 @@ function hasl_out = hasl_decode(hasl_in, asl_para)
         hasl_decode_mat = hasl_decode_mat1;
     elseif state_num == 5
         hasl_decode_mat = hasl_decode_mat3;
-    elseif state_num == 9
-        hasl_decode_mat = hasl_decode_mat7;
     end
     
     hasl_decode_mat = hasl_decode_mat';
