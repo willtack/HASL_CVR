@@ -10,8 +10,11 @@ subj_folder = '~/test_data/S02_20190624' % data dir
 ASL_path = fullfile(subj_folder, 'ASL/ASL.nii');
 M0_path = fullfile(subj_folder, 'M0/M0.nii');
 
+asl_img = nii_load_dimg(ASL_path);
+asl_phase_num = size(asl_img, 4);
+
 % realign all ASL phases to M0
-spm_realign_hasl(M0_path, ASL_path);
+spm_realign_hasl(M0_path, ASL_path, asl_phase_num);
 
 % set path
 rM0_path = fullfile(subj_folder, 'M0/rM0.nii,1');
