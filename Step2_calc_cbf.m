@@ -8,13 +8,16 @@
 %         Calculate CVR, save change and change% nii
 %--------------------------------------------------------------------------------------------------
 
-addpath ~/hasl_function % code_dir
+code_dir = '/data/jux/detre_group/hasl/HASL_CVR/';
+addpath(code_dir)
+addpath(fullfile(code_dir, 'hasl_function'))
+addpath(fullfile(code_dir, 'nifti_utils'))
 
 normalCO2_state = [1:45];
 hyperCO2_state = [48:60];  % ASL phase numbers
 
 % % set path
-subj_folder = '~/test_data/S02_20190624'; % data_dir
+subj_folder = '/data/jux/detre_group/hasl/S02_20190624'; % data_dir
 
 hasl_asl_filename = 'rASL.nii';
 hasl_m0_filename = 'rM0.nii';

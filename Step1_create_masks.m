@@ -5,7 +5,9 @@
 %          create resampled brainmask
 %--------------------------------------------------------------------------------------------------        
 
-subj_folder = '~/test_data/S02_20190624' % data dir
+code_dir = '/data/jux/detre_group/hasl/HASL_CVR/';
+addpath(fullfile(code_dir, 'nifti_utils'))
+subj_folder = '/data/jux/detre_group/hasl/S02_20190624'; % data dir
 
 ASL_path = fullfile(subj_folder, 'ASL/ASL.nii');
 M0_path = fullfile(subj_folder, 'M0/M0.nii');
