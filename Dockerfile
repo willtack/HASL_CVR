@@ -1,5 +1,5 @@
 FROM flywheel/matlab-mcr:v92.1
-MAINTAINER Garikoitz Lerma-Usabiaga <glerma@stanford.edu>
+MAINTAINER Will Tackett <william.tackett@pennmedicine.upenn.edu>
 
 # Install jq to parse the JSON config file
 RUN apt-get update -qq && apt-get install -y jq
@@ -16,4 +16,3 @@ RUN chmod +x ${FLYWHEEL}/run
 
 # Configure entrypoints-
 ENTRYPOINT ["/flywheel/v0/run"]
-
