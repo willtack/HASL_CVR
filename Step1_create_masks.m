@@ -1,6 +1,6 @@
 %--------------------------------------------------------------------------------------------------
 % Step 1
-% Prerequisite: Brain extraction from MPRAGE to get 'MPRAGE_brain.nii'
+% Preparation: Brain extraction from MPRAGE to get 'MPRAGE_brain.nii'
 % Purpose: Realign all phases in ASL to M0
 %          create resampled brainmask
 %--------------------------------------------------------------------------------------------------        
