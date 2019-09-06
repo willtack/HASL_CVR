@@ -1,3 +1,5 @@
+function []=full_analysis(aslpath, m0path, mpragepath, outputdir)
+
 %--------------------------------------------------------------------------------------------------
 % Step 1
 % Preparation: Brain extraction from MPRAGE to get 'MPRAGE_brain.nii'
@@ -10,25 +12,43 @@ addpath(fullfile(code_dir, 'nifti_utils'))
 addpath(code_dir)
 addpath(fullfile(code_dir, 'hasl_function'))
 addpath(fullfile(code_dir, 'nifti_utils'))
-subj_folder = '/data/jux/detre_group/hasl/S02_20190624'; % data dir
+subj_folder = outputdir; % data dir
 
-ASL_path = fullfile(subj_folder, 'ASL/ASL.nii');
-M0_path = fullfile(subj_folder, 'M0/M0.nii');
+ASL_file = fullfile(aslpath);
+[ASL_path, ~, ~] = fileparts(ASL_file);
+M0_file = fullfile(m0path);
+[M0_path, ~, ~] = fileparts(M0_file);
+skullstrippedbrain_file = fullfile(mpragepath);
+[MPRAGE_path, ~, ~] = fileparts(skullstrippedbrain_file);
 
-asl_img = nii_load_dimg(ASL_path);
+
+asl_img = nii_load_dimg(ASL_file);
 asl_phase_num = size(asl_img, 4);
 
+% create output folders
+outASLdir = fullfile(subj_folder, 'ASL');
+mkdir(outASLdir);
+outM0dir = fullfile(subj_folder, 'M0');
+mkdir(outM0dir);
+outMPRAGEdir = fullfile(subj_folder, 'MPRAGE');
+mkdir(outMPRAGEdir);
+
+copyfile(ASL_file, outASLdir);
+copyfile(M0_file, outM0dir);
+copyfile(skullstrippedbrain_file, outMPRAGEdir);
+
 % realign all ASL phases to M0
-spm_realign_hasl(M0_path, ASL_path, asl_phase_num);
+spm_realign_hasl(M0_file, ASL_file, asl_phase_num);
 
 % set path
+copyfile(fullfile(M0_path, 'rM0.nii'), outM0dir);
 rM0_path = fullfile(subj_folder, 'M0/rM0.nii,1');
-skullstrippedbrain_path = fullfile(subj_folder,'MPRAGE/MPRAGE_brain.nii');
 
 % skullstrippedbrain resliced to rM0
-spm_coreg_reslice({rM0_path},{skullstrippedbrain_path},{''}); 
+spm_coreg_reslice({rM0_path},{skullstrippedbrain_file},{''}); 
 
 % save skullstripped mask
+copyfile(fullfile(MPRAGE_path, 'rMPRAGE_brain.nii'), outMPRAGEdir);
 rskullstrippedbrain_path = fullfile(subj_folder,'MPRAGE/rMPRAGE_brain.nii');
 rskullstrippedbrain_img = nii_load_dimg(rskullstrippedbrain_path);
 
@@ -39,6 +59,9 @@ nii = load_nii(fullfile(subj_folder, 'M0/rM0.nii'),[1]);
 nii.img = rskullstrippedbrain_img;
 save_nii(nii, fullfile(subj_folder,'MPRAGE/brain_mask.nii'))
 
+ % copy remaining derivatives to output directory
+copyfile(fullfile(ASL_path, 'rASL.nii'), outASLdir);
+%copyfile(fullfile(MPRAGE_path, 'brain_mask.nii'), outMPRAGEdir); 
 
 
 %--------------------------------------------------------------------------------------------------
@@ -66,7 +89,7 @@ hasl_asl_path = fullfile(subj_folder, 'ASL', hasl_asl_filename);
 hasl_m0_path = fullfile(subj_folder, 'M0', hasl_m0_filename);
 brainmask_path = fullfile(subj_folder, 'MPRAGE', brainmask_filename);
 brainmsk = nii_load_dimg(brainmask_path);
-m0_path = nii_phase_extract(hasl_m0_path, 'm0', 1);
+m0_path = nii_phase_extract(hasl_m0_path, 'M0', 1);
 
 % % set parameters
 asl_para = hasl_para_init();
@@ -128,50 +151,50 @@ hyperCO2ttccbf_img = hasl_filter_apply(hyperCO2ttccbf_img, brainmsk, smooth_kern
 % % save nii for normalCO2(BL) and hyperCO2(HC) state CBF, Transit Time and ttCBF
 nii.hdr.dime.dim(5)=1; 
 nii.img = normalCO2cbf_img(:,:,:,4); 
-save_nii(nii, fullfile(subj_folder, 'output/nii/normalCO2_cbf.nii'));
+save_nii(nii, fullfile(subj_folder, 'normalCO2_cbf.nii'));
 nii.hdr.dime.dim(5)=1;
 nii.img = hyperCO2cbf_img(:,:,:,4);
-save_nii(nii, fullfile(subj_folder, 'output/nii/hyperCO2_cbf.nii'));
+save_nii(nii, fullfile(subj_folder, 'hyperCO2_cbf.nii'));
 
 nii.hdr.dime.dim(5)=1;   
 nii.img = normalCO2ttccbf_img(:,:,:,4); 
-save_nii(nii, fullfile(subj_folder, 'output/nii/normalCO2_ttcbf.nii'));
+save_nii(nii, fullfile(subj_folder, 'normalCO2_ttcbf.nii'));
 nii.hdr.dime.dim(5)=1;
 nii.img = hyperCO2ttccbf_img(:,:,:,4);
-save_nii(nii, fullfile(subj_folder, 'output/nii/hyperCO2_ttcbf.nii'));
+save_nii(nii, fullfile(subj_folder, 'hyperCO2_ttcbf.nii'));
 
 normalCO2tt_img = normalCO2tt_img.*1000; % *1000:change unit from 's' to 'ms'
 nii.hdr.dime.dim(5)=1;
 nii.img = normalCO2tt_img;
-save_nii(nii, fullfile(subj_folder,'output/nii/normalCO2_tt.nii'));
+save_nii(nii, fullfile(subj_folder,'normalCO2_tt.nii'));
 hyperCO2tt_img = hyperCO2tt_img.*1000;
 nii.hdr.dime.dim(5)=1;
 nii.img = hyperCO2tt_img;
-save_nii(nii, fullfile(subj_folder,'output/nii/hyperCO2_tt.nii'));
+save_nii(nii, fullfile(subj_folder,'hyperCO2_tt.nii'));
 
 
 % % save change and change% of CBF, tt and ttCBF between BL and HC
 diff_cbf_img = hyperCO2cbf_img(:,:,:,4) - normalCO2cbf_img(:,:,:,4);
 nii.img = diff_cbf_img;
-save_nii(nii, fullfile(subj_folder, 'output/nii/diff_cbf.nii'));
+save_nii(nii, fullfile(subj_folder, 'diff_cbf.nii'));
 
 cbf_ratio_img = (diff_cbf_img./normalCO2cbf_img(:,:,:,4)).*100;
 nii.img = cbf_ratio_img;
-save_nii(nii, fullfile(subj_folder, 'output/nii/change%_cbf.nii'));
+save_nii(nii, fullfile(subj_folder, 'change%_cbf.nii'));
 
 diff_ttccbf_img = hyperCO2ttccbf_img(:,:,:,4) - normalCO2ttccbf_img(:,:,:,4);
 nii.img = diff_ttccbf_img;
-save_nii(nii, fullfile(subj_folder, 'output/nii/diff_ttcbf.nii'));
+save_nii(nii, fullfile(subj_folder, 'diff_ttcbf.nii'));
 
 ttccbf_ratio_img = (diff_ttccbf_img./normalCO2ttccbf_img(:,:,:,4)).*100;
 nii.img = ttccbf_ratio_img;
-save_nii(nii, fullfile(subj_folder, 'output/nii/change%_ttcbf.nii'));
+save_nii(nii, fullfile(subj_folder, 'change%_ttcbf.nii'));
 
 diff_tt_img = normalCO2tt_img - hyperCO2tt_img;
 nii.img = diff_tt_img;
-save_nii(nii, fullfile(subj_folder, 'output/nii/diff_tt.nii'));
+save_nii(nii, fullfile(subj_folder, 'diff_tt.nii'));
 
 tt_ratio_img = (diff_tt_img./normalCO2tt_img).*100;
 nii.img = tt_ratio_img;
-save_nii(nii, fullfile(subj_folder, 'output/nii/change%_tt.nii'));
+save_nii(nii, fullfile(subj_folder, 'change%_tt.nii'));
 
