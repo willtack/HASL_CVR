@@ -33,7 +33,7 @@ fi
 
 
 # Run the Matlab executable
-time /msa/run_dwisplitshells.sh "${MCR_ROOT}" "${aslFile}" "${m0File}" "${mprageFile}" "${OUTPUT_DIR}"
+time /msa/run_hasl.sh "${MCR_ROOT}" "${aslFile}" "${m0File}" "${mprageFile}" "${OUTPUT_DIR}"
 
 
 # Check exit status
