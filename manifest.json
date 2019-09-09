@@ -1,0 +1,32 @@
+{
+  "name": "hasl-decoder",
+  "label": "HASL Decoder",
+  "description": "CVR Hadamard-encoded multi-delay ASL data(HASL) postprocessing pipeline",
+  "author": "Tianye Lin <tianye.lin@pennmedicine.upenn.edu>",
+  "maintainer": "Will Tackett <william.tackett@pennmedicine.edu>",
+  "url": "https://github.com/willtack/HASL_CVR",
+  "source": "https://github.com/willtack/HASL_CVR",
+  "license": "BSD-3-Clause",
+  "flywheel": {
+    "suite": "BrainScienceCenter"
+  },
+  "version": "0.0.1",
+  "custom": {
+    "docker-image": "willtack/hasl"
+  },
+  "inputs": {
+    "asl": {
+      "base": "file",
+      "description": "Path to raw ASL image",
+    },
+    "m0": {
+      "base": "file",
+      "description": "Path to M0 image",
+    },
+    "mprage": {
+      "base": "file",
+      "description": "Path to MPRAGE",
+      }
+    }
+  }
+}
