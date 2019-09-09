@@ -7,7 +7,11 @@ function []=full_analysis(aslpath, m0path, mpragepath, outputdir)
 %          create resampled brainmask
 %--------------------------------------------------------------------------------------------------        
 
+<<<<<<< HEAD
 code_dir = pwd;
+=======
+code_dir = '/data/jux/detre_group/hasl/HASL_CVR/';
+>>>>>>> e2d9fa443a2f746f2ec21a8ce17722403f8de64f
 addpath(fullfile(code_dir, 'nifti_utils'))
 addpath(code_dir)
 addpath(fullfile(code_dir, 'hasl_function'))
