@@ -33,6 +33,7 @@ copyfile(M0_file, outM0dir);
 copyfile(skullstrippedbrain_file, outMPRAGEdir);
 
 % realign all ASL phases to M0
+fprintf("starting realignment")
 spm_realign_hasl(M0_file, ASL_file, asl_phase_num);
 
 % set path
@@ -40,12 +41,15 @@ copyfile(fullfile(M0_path, 'rM0.nii'), outM0dir);
 rM0_path = fullfile(subj_folder, 'M0/rM0.nii,1');
 
 % skullstrippedbrain resliced to rM0
+fprintf("reslicing to M0")
 spm_coreg_reslice({rM0_path},{skullstrippedbrain_file},{''});
 
 % save skullstripped mask
 copyfile(fullfile(MPRAGE_path, 'rMPRAGE_brain.nii'), outMPRAGEdir);
 rskullstrippedbrain_path = fullfile(subj_folder,'MPRAGE/rMPRAGE_brain.nii');
+%reslice_nii(rskullstrippedbrain_path, fullfile(subj_folder,'MPRAGE/rsMPRAGE_brain.nii'));
 rskullstrippedbrain_img = nii_load_dimg(rskullstrippedbrain_path);
+%rskullstrippedbrain_img = nii_load_dimg(fullfile(subj_folder,'MPRAGE/rsMPRAGE_brain.nii'));
 
 rskullstrippedbrain_img(rskullstrippedbrain_img>0)=1;
 rskullstrippedbrain_img(rskullstrippedbrain_img<=0)=0;
