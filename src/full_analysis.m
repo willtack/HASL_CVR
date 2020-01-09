@@ -43,6 +43,7 @@ rM0_path = fullfile(subj_folder, 'M0/rM0.nii,1');
 spm_coreg_reslice({rM0_path},{skullstrippedbrain_file},{''});
 
 % save skullstripped mask
+copyfile(fullfile(MPRAGE_path, 'rMPRAGE_brain.nii'), outMPRAGEdir);
 rskullstrippedbrain_path = fullfile(subj_folder,'MPRAGE/rMPRAGE_brain.nii');
 rskullstrippedbrain_img = nii_load_dimg(rskullstrippedbrain_path);
 
