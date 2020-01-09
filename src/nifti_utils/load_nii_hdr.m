@@ -61,7 +61,7 @@ function [hdr, filetype, fileprefix, machine] = load_nii_hdr(fileprefix)
          case 'ieee-be', machine = 'ieee-le';
          end
 
-         fid = fopen(fn,'r',machine);
+         fid = fopen(fn,'r');
 
          if fid < 0,
             msg = sprintf('Cannot open file %s.',fn);
