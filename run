@@ -8,8 +8,8 @@ echo -e "$CONTAINER  Initiated"
 # Built to flywheel-v0 spec.
 FLYWHEEL_BASE=/flywheel/v0
 MCR_ROOT=/usr/local/MATLAB/MATLAB_Runtime/v96/  # double check this
+INPUT_DIR=${FLYWHEEL_BASE}/input
 OUTPUT_DIR=${FLYWHEEL_BASE}/output
-mkdir ${OUTPUT_DIR}
 CODE_DIR=${FLYWHEEL_BASE}/app/for_testing
 
 # Make sure that /output directory exists
@@ -20,9 +20,9 @@ if [[ ! -d "${OUTPUT_DIR}" ]]
 fi
 
 # Set paths to input files
-aslFile=$(find $FLYWHEEL_BASE/input/asl/ -type f | grep .nii)
-m0File=$(find $FLYWHEEL_BASE/input/m0/ -type f | grep .nii)
-mprageFile=$(find $FLYWHEEL_BASE/input/mprage/ | grep .nii)
+aslFile=$(find ${INPUT_DIR}/asl/ -type f | grep .nii)
+m0File=$(find ${INPUT_DIR}/m0/ -type f | grep .nii)
+mprageFile=$(find ${INPUT_DIR}/mprage/ | grep .nii)
 
 # Check for required inputs
 if [[ -z "$aslFile" ]] ||  [[ -z "$m0File" ]] || [[ -z "$mprageFile" ]]; then
@@ -30,9 +30,8 @@ if [[ -z "$aslFile" ]] ||  [[ -z "$m0File" ]] || [[ -z "$mprageFile" ]]; then
   exit 1
 fi
 
-chmod 777 ${FLYWHEEL_BASE}
-chmod 777 /root/
-
+ls -Rl ${INPUT_DIR}
+ls -al
 
 # Run the Matlab executable
 time ${CODE_DIR}/run_full_analysis.sh "${MCR_ROOT}"\
