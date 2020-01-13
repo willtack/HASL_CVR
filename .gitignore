@@ -1,3 +1,8 @@
 app/for_testing/full_analysis
 app/for_redistribution_files_only/full_analysis
 PackagingLog.html
+app/for_redistribution_files_only/splash.png
+app/for_testing/splash.png
+app/for_testing/mccExcludedFiles.log
+app/for_testing/requiredMCRProducts.txt
+full_analysis.prj
