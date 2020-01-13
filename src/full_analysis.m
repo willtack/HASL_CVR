@@ -9,15 +9,12 @@ function []=full_analysis(aslpath, m0path, mpragepath, outputdir)
 fprintf("Starting Step 1")
 subj_folder = outputdir; % data dir
 
-ASL_file = fullfile(aslpath);
-[ASL_path, ~, ~] = fileparts(ASL_file);
-M0_file = fullfile(m0path);
-[M0_path, ~, ~] = fileparts(M0_file);
-skullstrippedbrain_file = fullfile(mpragepath);
-[MPRAGE_path, ~, ~] = fileparts(skullstrippedbrain_file);
+[~, asl_name, asl_ext] = fileparts(aslpath);
+[~, m0_name, m0_ext] = fileparts(m0path);
+[~, mprage_name, mprage_ext] = fileparts(mpragepath);
 
 
-asl_img = nii_load_dimg(ASL_file);
+asl_img = nii_load_dimg(aslpath);
 asl_phase_num = size(asl_img, 4);
 
 % create output folders
@@ -28,39 +25,35 @@ mkdir(outM0dir);
 outMPRAGEdir = fullfile(subj_folder, 'MPRAGE');
 mkdir(outMPRAGEdir);
 
-copyfile(ASL_file, outASLdir);
-copyfile(M0_file, outM0dir);
-copyfile(skullstrippedbrain_file, outMPRAGEdir);
+% copy inputs over to output folder
+copyfile(aslpath, outASLdir);
+copyfile(m0path, outM0dir);
+copyfile(mpragepath, outMPRAGEdir);
+
+% define the three analytes that are now in the output folder
+out_M0_path = fullfile(outM0dir, strcat(m0_name, m0_ext));
+out_ASL_path = fullfile(outASLdir, strcat(asl_name, asl_ext));
+out_skullstrippedbrain_file = fullfile(outMPRAGEdir, strcat(mprage_name, mprage_ext)); 
 
 % realign all ASL phases to M0
 fprintf("starting realignment")
-spm_realign_hasl(M0_file, ASL_file, asl_phase_num);
-
-% set path
-copyfile(fullfile(M0_path, 'rM0.nii'), outM0dir);
-rM0_path = fullfile(subj_folder, 'M0/rM0.nii,1');
+spm_realign_hasl(out_M0_path, out_ASL_path, asl_phase_num)
 
 % skullstrippedbrain resliced to rM0
+rM0_path = fullfile(outM0dir, strcat('r',m0_name, m0_ext));
 fprintf("reslicing to M0")
-spm_coreg_reslice({rM0_path},{skullstrippedbrain_file},{''});
+spm_coreg_reslice({rM0_path},{out_skullstrippedbrain_file},{''});
 
 % save skullstripped mask
-copyfile(fullfile(MPRAGE_path, 'rMPRAGE_brain.nii'), outMPRAGEdir);
-rskullstrippedbrain_path = fullfile(subj_folder,'MPRAGE/rMPRAGE_brain.nii');
-%reslice_nii(rskullstrippedbrain_path, fullfile(subj_folder,'MPRAGE/rsMPRAGE_brain.nii'));
+rskullstrippedbrain_path = fullfile(outMPRAGEdir, strcat('r',mprage_name, mprage_ext));
 rskullstrippedbrain_img = nii_load_dimg(rskullstrippedbrain_path);
-%rskullstrippedbrain_img = nii_load_dimg(fullfile(subj_folder,'MPRAGE/rsMPRAGE_brain.nii'));
 
 rskullstrippedbrain_img(rskullstrippedbrain_img>0)=1;
 rskullstrippedbrain_img(rskullstrippedbrain_img<=0)=0;
 
-nii = load_nii(fullfile(subj_folder, 'M0/rM0.nii'),[1]);
+nii = load_nii(fullfile(outM0dir, strcat('r', m0_name, m0_ext)));
 nii.img = rskullstrippedbrain_img;
 save_nii(nii, fullfile(subj_folder,'MPRAGE/brain_mask.nii'))
-
- % copy remaining derivatives to output directory
-copyfile(fullfile(ASL_path, 'rASL.nii'), outASLdir);
-%copyfile(fullfile(MPRAGE_path, 'brain_mask.nii'), outMPRAGEdir);
 
 
 %--------------------------------------------------------------------------------------------------
@@ -75,8 +68,8 @@ copyfile(fullfile(ASL_path, 'rASL.nii'), outASLdir);
 normalCO2_state = [1:45];
 hyperCO2_state = [48:60];  % ASL phase numbers
 
-hasl_asl_filename = 'rASL.nii';
-hasl_m0_filename = 'rM0.nii';
+hasl_asl_filename = strcat('r', asl_name, asl_ext);
+hasl_m0_filename = strcat('r', m0_name, m0_ext);
 brainmask_filename = 'brain_mask.nii';
 
 hasl_asl_path = fullfile(subj_folder, 'ASL', hasl_asl_filename);

@@ -8,7 +8,7 @@ function [hdr, filetype, fileprefix, machine] = load_nii_hdr(fileprefix)
       error('Usage: [hdr, filetype, fileprefix, machine] = load_nii_hdr(filename)');
    end
 
-   machine = 'ieee-le';
+   machine = 'ieee-be';
    new_ext = 0;
 
    if findstr('.nii',fileprefix)
@@ -40,7 +40,7 @@ function [hdr, filetype, fileprefix, machine] = load_nii_hdr(fileprefix)
       end
    end
 
-   fid = fopen(fn,'r');
+   fid = fopen(fn,'r', machine);
 
    if fid < 0,
       msg = sprintf('Cannot open file %s.',fn);
@@ -61,7 +61,7 @@ function [hdr, filetype, fileprefix, machine] = load_nii_hdr(fileprefix)
          case 'ieee-be', machine = 'ieee-le';
          end
 
-         fid = fopen(fn,'r');
+         fid = fopen(fn,'r', machine);
 
          if fid < 0,
             msg = sprintf('Cannot open file %s.',fn);
