@@ -30,28 +30,57 @@ copyfile(aslpath, outASLdir);
 copyfile(m0path, outM0dir);
 copyfile(mpragepath, outMPRAGEdir);
 
-% define the three analytes that are now in the output folder
-out_M0_path = fullfile(outM0dir, strcat(m0_name, m0_ext));
+% define the analytes (out_*) and derivatives (r*) that are now in or will be in 
+% the output folder
+% if inputs are gzipped, unzip and reassign out_X_path to
+% be the .nii NOT the .nii.gz
+
 out_ASL_path = fullfile(outASLdir, strcat(asl_name, asl_ext));
-out_skullstrippedbrain_file = fullfile(outMPRAGEdir, strcat(mprage_name, mprage_ext)); 
+out_M0_path = fullfile(outM0dir, strcat(m0_name, m0_ext));
+out_skullstrippedbrain_path = fullfile(outMPRAGEdir, strcat(mprage_name, mprage_ext)); 
+rM0_path = fullfile(outM0dir, strcat('r',m0_name, m0_ext));
+rskullstrippedbrain_path = fullfile(outMPRAGEdir, strcat('r',mprage_name, mprage_ext));
+
+if strcmp(asl_ext, '.gz')
+    gunzip(out_ASL_path, outASLdir);
+    out_ASL_path = fullfile(outASLdir, asl_name);
+end
+if strcmp(m0_ext, '.gz')
+    gunzip(out_M0_path, outM0dir);
+    out_M0_path = fullfile(outM0dir, m0_name);
+    rM0_path = fullfile(outM0dir, strcat('r',m0_name));
+end
+if strcmp(mprage_ext, '.gz')
+    gunzip(out_skullstrippedbrain_path, outMPRAGEdir);
+    out_skullstrippedbrain_path = fullfile(outMPRAGEdir, mprage_name);
+    rskullstrippedbrain_path = fullfile(outMPRAGEdir, strcat('r',mprage_name));
+end
+
+
+% check if M0 contains multiple volumes
+% [m0_nii_hdr, ~, ~, ~] = load_nii_hdr(out_M0_path);
+% if m0_nii_hdr.dime.dim(5) > 1
+%     spm_file_split(out_M0_path, outM0dir);
+%     m0_name = strcat(m0_name, '_00001');
+%     if gz; out_M0_path = fullfile(outM0dir, m0_name); else  
+%     rM0_path = fullfile(outM0dir, strcat('r',m0_name, m0_ext));
+% end
 
 % realign all ASL phases to M0
 fprintf("starting realignment")
 spm_realign_hasl(out_M0_path, out_ASL_path, asl_phase_num)
 
 % skullstrippedbrain resliced to rM0
-rM0_path = fullfile(outM0dir, strcat('r',m0_name, m0_ext));
 fprintf("reslicing to M0")
-spm_coreg_reslice({rM0_path},{out_skullstrippedbrain_file},{''});
+spm_coreg_reslice({rM0_path},{out_skullstrippedbrain_path},{''});
 
 % save skullstripped mask
-rskullstrippedbrain_path = fullfile(outMPRAGEdir, strcat('r',mprage_name, mprage_ext));
 rskullstrippedbrain_img = nii_load_dimg(rskullstrippedbrain_path);
 
 rskullstrippedbrain_img(rskullstrippedbrain_img>0)=1;
 rskullstrippedbrain_img(rskullstrippedbrain_img<=0)=0;
 
-nii = load_nii(fullfile(outM0dir, strcat('r', m0_name, m0_ext)));
+nii = load_nii(rM0_path);
 nii.img = rskullstrippedbrain_img;
 save_nii(nii, fullfile(subj_folder,'MPRAGE/brain_mask.nii'))
 
@@ -68,8 +97,8 @@ save_nii(nii, fullfile(subj_folder,'MPRAGE/brain_mask.nii'))
 normalCO2_state = [1:45];
 hyperCO2_state = [48:60];  % ASL phase numbers
 
-hasl_asl_filename = strcat('r', asl_name, asl_ext);
-hasl_m0_filename = strcat('r', m0_name, m0_ext);
+hasl_asl_filename = strcat('r', asl_name);
+hasl_m0_filename = strcat('r', m0_name);
 brainmask_filename = 'brain_mask.nii';
 
 hasl_asl_path = fullfile(subj_folder, 'ASL', hasl_asl_filename);
