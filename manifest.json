@@ -1,8 +1,8 @@
 {
-	"name": "hasl",
-	"label": "hasl",
+	"name": "hasl-decode",
+	"label": "HASL Decoder: Hadamard-encoded ASL (HASL) postprocessing pipeline",
 	"description": "CVR Hadamard-encoded multi-delay ASL data(HASL) postprocessing pipeline",
-	"version": "0",
+	"version": "0.0.3_0.0.3",
 	"inputs": {
 		"asl": {
 			"base": "file",
@@ -17,7 +17,7 @@
 			"description": "Path to MPRAGE"
 		}
 	},
-	"config": null,
+	"config": {},
 	"environment": {
 		"FLYWHEEL": "/flywheel/v0",
 		"LANG": "C.UTF-8",
@@ -29,11 +29,14 @@
 	"maintainer": "William Tackett",
 	"license": "BSD-3-Clause",
 	"source": "https://github.com/willtack/HASL_CVR",
-	"url": "https://github.com/willtack/HASL_CVR",
+	"url": "https://hub.docker.com/r/willtack/hasl/tags",
 	"custom": {
 		"gear-builder": {
 			"category": "analysis",
-			"image": "willtack/hasl:0.0.1"
+			"image": "willtack/hasl:0.0.3"
+		},
+		"flywheel": {
+			"suite": "BrainScienceCenter"
 		}
 	}
 }
