@@ -26,8 +26,14 @@ function ext = load_nii_ext(fileprefix)
    new_ext = 0;
 
    if findstr('.nii',fileprefix)
-      new_ext = 1;
-      fileprefix = strrep(fileprefix,'.nii','');
+       %%% WT mod 1-14-2020
+       if contains(fileprefix, '.nii.gz')
+           fileprefix = strrep(fileprefix,'.nii.gz','');
+       else
+           fileprefix = strrep(fileprefix,'.nii','');
+       end
+       new_ext = 1;
+       %%%
    end
 
    if findstr('.hdr',fileprefix)
