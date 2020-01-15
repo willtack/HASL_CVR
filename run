@@ -56,12 +56,10 @@ if [[ -z $outputs ]]; then
   exit 1
 else
   cd $OUTPUT_DIR
+  rm -rf MPRAGE ASL M0 # remove the intermediate directories. just keep the derived maps
   echo -e "$CONTAINER  Wrote: `ls`"
   echo -e "$CONTAINER  Done!"
 fi
-
-# Handle permissions of the outputs
-chmod -R 777 $OUTPUT_DIR
 
 # Exit
 exit 0
