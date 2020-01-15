@@ -13,7 +13,7 @@ function [hdr, filetype, fileprefix, machine] = load_nii_hdr(fileprefix)
 
    if findstr('.nii',fileprefix)
        %%% WT mod 1-14-2020
-       if contains(fileprefix, '.nii.gz')
+       if contains('.nii.gz', fileprefix)
            fileprefix = strrep(fileprefix,'.nii.gz','');
        else
            fileprefix = strrep(fileprefix,'.nii','');
