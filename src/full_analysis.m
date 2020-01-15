@@ -41,14 +41,18 @@ out_skullstrippedbrain_path = fullfile(outMPRAGEdir, strcat(mprage_name, mprage_
 rM0_path = fullfile(outM0dir, strcat('r',m0_name, m0_ext));
 rskullstrippedbrain_path = fullfile(outMPRAGEdir, strcat('r',mprage_name, mprage_ext));
 
+gz = false; 
 if strcmp(asl_ext, '.gz')
     gunzip(out_ASL_path, outASLdir);
     out_ASL_path = fullfile(outASLdir, asl_name);
+    asl_ext = '';
 end
 if strcmp(m0_ext, '.gz')
+    gz = true;
     gunzip(out_M0_path, outM0dir);
     out_M0_path = fullfile(outM0dir, m0_name);
     rM0_path = fullfile(outM0dir, strcat('r',m0_name));
+    m0_ext = '';
 end
 if strcmp(mprage_ext, '.gz')
     gunzip(out_skullstrippedbrain_path, outMPRAGEdir);
@@ -58,13 +62,19 @@ end
 
 
 % check if M0 contains multiple volumes
-% [m0_nii_hdr, ~, ~, ~] = load_nii_hdr(out_M0_path);
-% if m0_nii_hdr.dime.dim(5) > 1
-%     spm_file_split(out_M0_path, outM0dir);
-%     m0_name = strcat(m0_name, '_00001');
-%     if gz; out_M0_path = fullfile(outM0dir, m0_name); else  
-%     rM0_path = fullfile(outM0dir, strcat('r',m0_name, m0_ext));
-% end
+[m0_nii_hdr, ~, ~, ~] = load_nii_hdr(out_M0_path);
+if m0_nii_hdr.dime.dim(5) > 1
+    spm_file_split(out_M0_path, outM0dir);
+    if gz 
+        [~, m0_basename, m0_ext] = fileparts(m0_name);
+    else
+        [~, m0_basename, m0_ext] = fileparts(strcat(m0_name, m0_ext));
+    end
+    m0_basename = strcat(m0_basename, '_00001');
+    m0_name = strcat(m0_basename, m0_ext);
+    out_M0_path = fullfile(outM0dir, strcat(m0_basename, m0_ext));   
+    rM0_path = fullfile(outM0dir, strcat('r',m0_basename, m0_ext));
+end
 
 % realign all ASL phases to M0
 fprintf("starting realignment")
@@ -97,8 +107,8 @@ save_nii(nii, fullfile(subj_folder,'MPRAGE/brain_mask.nii'))
 normalCO2_state = [1:45];
 hyperCO2_state = [48:60];  % ASL phase numbers
 
-hasl_asl_filename = strcat('r', asl_name);
-hasl_m0_filename = strcat('r', m0_name);
+hasl_asl_filename = strcat('r', asl_name, asl_ext);
+hasl_m0_filename = strcat('r', m0_name, m0_ext);
 brainmask_filename = 'brain_mask.nii';
 
 hasl_asl_path = fullfile(subj_folder, 'ASL', hasl_asl_filename);
