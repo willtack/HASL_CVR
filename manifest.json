@@ -2,7 +2,7 @@
 	"name": "hasl-decode",
 	"label": "HASL Decoder: Hadamard-encoded ASL (HASL) postprocessing pipeline",
 	"description": "CVR Hadamard-encoded multi-delay ASL data(HASL) postprocessing pipeline",
-	"version": "0.0.3_0.0.3",
+	"version": "0.0.3_0.0.3b",
 	"inputs": {
 		"asl": {
 			"base": "file",
@@ -33,7 +33,7 @@
 	"custom": {
 		"gear-builder": {
 			"category": "analysis",
-			"image": "willtack/hasl:0.0.3"
+			"image": "willtack/hasl:0.0.3b"
 		},
 		"flywheel": {
 			"suite": "BrainScienceCenter"
