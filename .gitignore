@@ -6,3 +6,7 @@ app/for_testing/splash.png
 app/for_testing/mccExcludedFiles.log
 app/for_testing/requiredMCRProducts.txt
 full_analysis.prj
+.dockerignore
+.dockerignore.save
+.dockerignore.save.1
+*~

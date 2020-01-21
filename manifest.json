@@ -2,7 +2,7 @@
 	"name": "hasl-decode",
 	"label": "HASL Decoder: Hadamard-encoded ASL (HASL) postprocessing pipeline",
 	"description": "CVR Hadamard-encoded multi-delay ASL data(HASL) postprocessing pipeline",
-	"version": "0.0.4_0.0.4",
+	"version": "0.0.5_0.0.5",
 	"inputs": {
 		"asl": {
 			"base": "file",
@@ -17,7 +17,17 @@
 			"description": "Path to MPRAGE"
 		}
 	},
-	"config": {},
+	"config": {
+		"hyperCO2": {
+			"default": false,
+			"description": "Is there a C02 challenge in this study?",
+			"type": "boolean""
+		},
+		"stimulus_start": {
+			"description": "Timepoint when C02 stimulus starts. (hyperC02 must be set to true for this to apply.)"
+			 "type": "integer"
+		}
+	},
 	"environment": {
 		"FLYWHEEL": "/flywheel/v0",
 		"LANG": "C.UTF-8",
@@ -33,7 +43,7 @@
 	"custom": {
 		"gear-builder": {
 			"category": "analysis",
-			"image": "willtack/hasl:0.0.4"
+			"image": "willtack/hasl:0.0.5"
 		},
 		"flywheel": {
 			"suite": "BrainScienceCenter"
