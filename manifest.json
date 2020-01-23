@@ -1,7 +1,7 @@
 {
 	"name": "hasl-decode",
-	"label": "HASL Decoder: Hadamard-encoded ASL (HASL) postprocessing pipeline",
-	"description": "CVR Hadamard-encoded multi-delay ASL data(HASL) postprocessing pipeline.",
+	"label": "HASL Decoder: Hadamard-encoded ASL (HASL) processing pipeline",
+	"description": "Hadamard-encoded multi-delay ASL data(HASL) processing pipeline for measuring cerebrovascular reactivity. Decodes the Hadamard matrix into three post-labelling delays and calculates cerebral blood flow, arterial transit time and transit time-corrected cerebral blood flow.",
 	"version": "0.1.0_0.1.0",
 	"inputs": {
 		"asl": {
