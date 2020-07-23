@@ -78,7 +78,7 @@ else
   cd $OUTPUT_DIR
   mkdir results
   cp * results/
-  zip results.zip results
+  zip -r results.zip results
   rm -rf results
   rm -rf MPRAGE ASL M0 # remove the intermediate directories. just keep the derived maps
   echo -e "$CONTAINER  Wrote: `ls`"
