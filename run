@@ -46,8 +46,8 @@ ls -Rl ${INPUT_DIR}
 ls -al
 
 # Arg parsing
-config_hyperC02="$(parse_config 'hyperC02')"
-if [[ $config_hyperC02 == 'false' ]]; then hyperC02_flag='0'; else hyperC02_flag='1'; fi
+config_hyperCO2="$(parse_config 'hyperCO2')"
+if [[ $config_hyperCO2 == 'false' ]]; then hyperCO2_flag='0'; else hyperCO2_flag='1'; fi
 config_stimulus_start="$(parse_config 'stimulus_start')"
 
 
@@ -56,7 +56,7 @@ time ${CODE_DIR}/run_full_analysis.sh "${MCR_ROOT}"\
                                       "${aslFile}"\
                                       "${m0File}"\
                                       "${mprageFile}"\
-                                      "${hyperC02_flag}" \
+                                      "${hyperCO2_flag}" \
                                       "${config_stimulus_start}" \
                                       "${OUTPUT_DIR}"
 
