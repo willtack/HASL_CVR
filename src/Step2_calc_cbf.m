@@ -8,7 +8,7 @@
 %         Calculate CVR, save change and change% nii
 %--------------------------------------------------------------------------------------------------
 
-code_dir = '/data/jux/detre_group/hasl/HASL_CVR/';
+code_dir = pwd;
 addpath(code_dir)
 addpath(fullfile(code_dir, 'hasl_function'))
 addpath(fullfile(code_dir, 'nifti_utils'))
@@ -17,7 +17,7 @@ normalCO2_state = [1:45];
 hyperCO2_state = [48:60];  % ASL phase numbers
 
 % % set path
-subj_folder = '/data/jux/detre_group/hasl/S02_20190624'; % data_dir
+subj_folder = '/home/will/Desktop/input'; % data_dir
 
 hasl_asl_filename = 'rASL.nii';
 hasl_m0_filename = 'rM0.nii';
@@ -69,22 +69,22 @@ nii = load_nii(hasl_m0_path);
 
 % %  CBF,Transit time,ttCBF calculation in different CO2 state
 normalCO2cbf_img = hasl_cbf(normalCO2_hasl_pw, m0_img, brainmsk, asl_para);
-normalCO2cbf_img = hasl_filter_apply(normalCO2cbf_img, brainmsk, smooth_kernel);
+%normalCO2cbf_img = hasl_filter_apply(normalCO2cbf_img, brainmsk, smooth_kernel);
 
 hyperCO2cbf_img = hasl_cbf(hyperCO2_hasl_pw, m0_img, brainmsk, asl_para);
-hyperCO2cbf_img = hasl_filter_apply(hyperCO2cbf_img, brainmsk, smooth_kernel);
+%hyperCO2cbf_img = hasl_filter_apply(hyperCO2cbf_img, brainmsk, smooth_kernel);
 
 normalCO2tt_img = hasl_calc_tt(normalCO2_hasl_pw, brainmsk, asl_para);
-normalCO2tt_img = hasl_filter_apply(normalCO2tt_img, brainmsk, smooth_kernel);
+%normalCO2tt_img = hasl_filter_apply(normalCO2tt_img, brainmsk, smooth_kernel);
 
 hyperCO2tt_img = hasl_calc_tt(hyperCO2_hasl_pw, brainmsk, asl_para);
-hyperCO2tt_img = hasl_filter_apply(hyperCO2tt_img, brainmsk, smooth_kernel);
+%hyperCO2tt_img = hasl_filter_apply(hyperCO2tt_img, brainmsk, smooth_kernel);
 
 normalCO2ttccbf_img = hasl_ttccbf(normalCO2_hasl_pw, m0_img, normalCO2tt_img, brainmsk, asl_para);
-normalCO2ttccbf_img = hasl_filter_apply(normalCO2ttccbf_img, brainmsk, smooth_kernel);
+%normalCO2ttccbf_img = hasl_filter_apply(normalCO2ttccbf_img, brainmsk, smooth_kernel);
 
 hyperCO2ttccbf_img = hasl_ttccbf(hyperCO2_hasl_pw, m0_img, hyperCO2tt_img, brainmsk, asl_para);
-hyperCO2ttccbf_img = hasl_filter_apply(hyperCO2ttccbf_img, brainmsk, smooth_kernel);
+%hyperCO2ttccbf_img = hasl_filter_apply(hyperCO2ttccbf_img, brainmsk, smooth_kernel);
 
 % % save nii for normalCO2(BL) and hyperCO2(HC) state CBF, Transit Time and ttCBF
 nii.hdr.dime.dim(5)=1; 
