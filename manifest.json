@@ -2,7 +2,7 @@
 	"name": "hasl-decode",
 	"label": "HASL Decoder: Hadamard-encoded ASL (HASL) processing pipeline",
 	"description": "Hadamard-encoded multi-delay ASL data(HASL) processing pipeline for measuring cerebrovascular reactivity. Decodes the Hadamard matrix into three post-labelling delays and calculates cerebral blood flow, arterial transit time and transit time-corrected cerebral blood flow.",
-	"version": "0.1.1_0.1.2",
+	"version": "0.2.1_0.2.1",
 	"inputs": {
 		"asl": {
 			"base": "file",
@@ -44,7 +44,7 @@
 	"custom": {
 		"gear-builder": {
 			"category": "analysis",
-			"image": "willtack/hasl:0.1.2"
+			"image": "willtack/hasl:0.2.1"
 		},
 		"flywheel": {
 			"suite": "BrainScienceCenter"
