@@ -6,7 +6,7 @@ function img_cbf = hasl_cbf(img_pw, img_m0, img_msk, asl_para) % ld, pld is arra
     % % Extract parameter from asl_para     
 
     T1b = asl_para.T1b;
-    Lamida = asl_para.Lambda;
+    Lambda = asl_para.Lambda;
     Effeciency = asl_para.Effeciency;
     
     LD_arr = asl_para.LD_arr;
@@ -33,7 +33,7 @@ function img_cbf = hasl_cbf(img_pw, img_m0, img_msk, asl_para) % ld, pld is arra
         
         cbf_tmp = img_cbf(:, :, :, idx);
 
-        cbf_tmp(msk_ind) = 6000 * Lamida * exp( PLD_arr(idx) / T1b ) /...
+        cbf_tmp(msk_ind) = 6000 * Lambda * exp( PLD_arr(idx) / T1b ) /...
                            (2 * Effeciency * T1b * ( 1 - exp( -LD_arr(idx) / T1b) )) *...
                            pw_tmp(msk_ind) ./ ( img_m0(msk_ind) * M0_Scale );
 

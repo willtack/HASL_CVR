@@ -1,4 +1,4 @@
-function img_out = hasl_filter_apply(img_in, img_msk, kernel)
+function img_out = auxil_asl_filter_apply(img_in, img_msk, kernel)
 
     kernel = kernel / sum(kernel(:));
     

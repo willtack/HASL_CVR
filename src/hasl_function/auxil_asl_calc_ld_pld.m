@@ -1,4 +1,4 @@
-function [ld, pld] = hasl_calc_ld_pld(ld_tot, pld_tot, pld_num, pld_lin, T1b)
+function [ld, pld] = auxil_asl_calc_ld_pld(ld_tot, pld_tot, pld_num, pld_lin, T1b)
 
     sig_total = exp(-pld_tot / T1b) * (1-exp(-ld_tot / T1b));
     sig_seg = sig_total / pld_num;

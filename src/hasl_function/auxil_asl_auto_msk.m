@@ -1,7 +1,7 @@
-function [img_msk] = hasl_auto_msk(img_m0, scale)
+function [img_msk] = auxil_asl_auto_msk(img_m0, scale)
 
     if nargin < 2
-        scale = 1.0; % 0.5 for GE, and 0.25 for UPenn
+        scale = 1.0;
     end
 
     msk_threshold = sum(img_m0(:).^2) / sum(img_m0(:)) * scale;

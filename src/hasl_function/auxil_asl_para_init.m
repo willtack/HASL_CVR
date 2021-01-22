@@ -1,4 +1,4 @@
-function asl_para = hasl_para_init()
+function asl_para = auxil_asl_para_init()
 
     % 3T Physio Parameter, Recommended Sequence Parameter
 

@@ -56,8 +56,6 @@ time ${CODE_DIR}/run_full_analysis.sh "${MCR_ROOT}"\
                                       "${aslFile}"\
                                       "${m0File}"\
                                       "${mprageFile}"\
-                                      "${hyperCO2_flag}" \
-                                      "${config_stimulus_start}" \
                                       "${OUTPUT_DIR}"
 
 # Check exit status

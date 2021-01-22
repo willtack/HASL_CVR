@@ -1,4 +1,4 @@
-function asl_para = hasl_para_proc_state(asl_para)
+function asl_para = auxil_asl_para_proc_state(asl_para)
     
     if asl_para.PLD_Num == 1
         
