@@ -45,10 +45,17 @@ fi
 ls -Rl ${INPUT_DIR}
 ls -al
 
+# Get file parts for MPRAGE
+MPRAGE_BASENAME=$(basename "${mprageFile}" .nii.gz)
+MPRAGE_BET="${OUTPUT_DIR}"/"${MPRAGE_BASENAME}_bet.nii.gz"
+
+# extract brain
+bet2 "${mprageFile}" "${MPRAGE_BET}"
+
 # Arg parsing
-config_hyperCO2="$(parse_config 'hyperCO2')"
-if [[ $config_hyperCO2 == 'false' ]]; then hyperCO2_flag='0'; else hyperCO2_flag='1'; fi
-config_stimulus_start="$(parse_config 'stimulus_start')"
+#config_hyperCO2="$(parse_config 'hyperCO2')"
+#if [[ $config_hyperCO2 == 'false' ]]; then hyperCO2_flag='0'; else hyperCO2_flag='1'; fi
+#config_stimulus_start="$(parse_config 'stimulus_start')"
 
 
 # Run the Matlab executable
@@ -65,6 +72,32 @@ if [[ $exit_status != 0 ]]; then
   exit 1
 fi
 
+# Get file parts for transit time map
+TT_MAP=$(find $OUTPUT_DIR -type f | grep tt.nii)
+#TT_DIR=$(dirname "${TT_MAP}")
+TT_BASENAME=$(basename "${TT_MAP}" .nii)
+TT_MNI="${OUTPUT_DIR}"/"${TT_BASENAME}_mni.nii"
+
+# Register TT map to MNI152 via MPRAGE scan
+flirt -ref "${MPRAGE_BET}" -in "${TT_MAP}" -omat $(pwd)/tt2struc.mat
+flirt -ref ${FSLDIR}/data/standard/MNI152_T1_2mm_brain -in "${MPRAGE_BET}" -omat $(pwd)/struc2mni_affine.mat
+fnirt --in="${mprageFile}" --aff=struc2mni_affine.mat --cout=struc2standard_warp --config=T1_2_MNI152_2mm
+applywarp --ref=${FSLDIR}/data/standard/MNI152_T1_2mm.nii.gz --in=${TT_MAP} --warp=struc2standard_warp \
+          --premat=tt2struc.mat --out=${TT_MNI}
+
+# Invert warps to bring vascular territory masks into same space as transit time map
+convert_xfm -omat $(pwd)/struc2tt.mat -inverse $(pwd)/tt2struc.mat
+invwarp --ref="${mprageFile}" --warp=struc2standard_warp --out=struc2standard_warp_inv
+
+TERRITORIES_DIR="${OUTPUT_DIR}/vascular_territories"
+mkdir "${TERRITORIES_DIR}"
+# Apply warps to every mask
+for mask in ${FLYWHEEL_BASE}/territories/*.nii.gz; do
+  new_mask_name="$(basename ${mask} .nii.gz)_native.nii.gz"
+  applywarp --ref="${TT_MAP}" --in="${mask}" --warp=struc2standard_warp_inv --postmat=struc2tt.mat --out=${TERRITORIES_DIR}/${new_mask_name}
+  fslmaths ${TERRITORIES_DIR}/${new_mask_name} -thrP 50 -bin ${TERRITORIES_DIR}/${new_mask_name}
+done
+
 # Get a list of the files in the output directory
 outputs=$(find $OUTPUT_DIR/* -maxdepth 0 -type f)
 
@@ -73,12 +106,15 @@ if [[ -z $outputs ]]; then
   echo "$CONTAINER  No results found in output directory... Exiting"
   exit 1
 else
+  WARPS_DIR="${OUTPUT_DIR}/warp_files"
+  mkdir ${WARPS_DIR}
+  mv *.nii.gz "${WARPS_DIR}/"
+  mv *.mat "${WARPS_DIR}/"
   cd $OUTPUT_DIR
-  mkdir results
-  cp * results/
-  zip -r results.zip results
-  rm -rf results
-  rm -rf MPRAGE ASL M0 # remove the intermediate directories. just keep the derived maps
+  zip -r vascular_territories.zip vascular_territories
+  zip -r warp_files.zip warp_files
+  rm -rf MPRAGE ASL M0 ${TERRITORIES_DIR} # remove the intermediate directories. just keep the derived maps
+  rm -rf ${WARPS_DIR}
   echo -e "$CONTAINER  Wrote: `ls`"
   echo -e "$CONTAINER  Done!"
 fi
