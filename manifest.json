@@ -2,7 +2,11 @@
 	"name": "hasl-decode",
 	"label": "HASL Decoder: Hadamard-encoded ASL (HASL) processing pipeline",
 	"description": "Hadamard-encoded multi-delay ASL data(HASL) processing pipeline for measuring cerebrovascular reactivity. Decodes the Hadamard matrix into three post-labelling delays and calculates cerebral blood flow, arterial transit time and transit time-corrected cerebral blood flow.",
+<<<<<<< HEAD
 	"version": "0.3.2_0.3.2",
+=======
+	"version": "0.1.1_0.1.2",
+>>>>>>> 4d0410692edfc486821256d898544b48d4c43d84
 	"inputs": {
 		"asl": {
 			"base": "file",
@@ -14,10 +18,27 @@
 		},
 		"mprage": {
 			"base": "file",
+<<<<<<< HEAD
 			"description": "Path to UN-skull-stripped highres structural image"
 		}
 	},
 	"config": {
+=======
+			"description": "Path to MPRAGE"
+		}
+	},
+	"config": {
+		"hyperCO2": {
+			"default": false,
+			"description": "Is there a CO2 challenge in this study?",
+			"type": "boolean"
+		},
+		"stimulus_start": {
+			"description": "Timepoint when CO2 stimulus starts. (hyperC02 must be set to true for this to apply.)",
+			"optional": true,
+			"type": "integer"
+		}
+>>>>>>> 4d0410692edfc486821256d898544b48d4c43d84
 	},
 	"environment": {
 		"FLYWHEEL": "/flywheel/v0",
@@ -34,7 +55,11 @@
 	"custom": {
 		"gear-builder": {
 			"category": "analysis",
+<<<<<<< HEAD
 			"image": "willtack/hasl:0.3.2"
+=======
+			"image": "willtack/hasl:0.1.2"
+>>>>>>> 4d0410692edfc486821256d898544b48d4c43d84
 		},
 		"flywheel": {
 			"suite": "BrainScienceCenter"

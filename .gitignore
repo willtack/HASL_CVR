@@ -5,9 +5,16 @@ app/for_redistribution_files_only/splash.png
 app/for_testing/splash.png
 app/for_testing/mccExcludedFiles.log
 app/for_testing/requiredMCRProducts.txt
+<<<<<<< HEAD
 app/full_analysis.prj
+=======
+full_analysis.prj
+>>>>>>> 4d0410692edfc486821256d898544b48d4c43d84
 .dockerignore
 .dockerignore.save
 .dockerignore.save.1
 *~
+<<<<<<< HEAD
 build_and_deploy.sh
+=======
+>>>>>>> 4d0410692edfc486821256d898544b48d4c43d84

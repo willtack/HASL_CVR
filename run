@@ -22,7 +22,11 @@ FLYWHEEL_BASE=/flywheel/v0
 MCR_ROOT=/usr/local/MATLAB/MATLAB_Runtime/v96/  # double check this
 INPUT_DIR=${FLYWHEEL_BASE}/input
 OUTPUT_DIR=${FLYWHEEL_BASE}/output
+<<<<<<< HEAD
 CODE_DIR=${FLYWHEEL_BASE}/app/for_redistribution_files_only
+=======
+CODE_DIR=${FLYWHEEL_BASE}/app/for_testing
+>>>>>>> 4d0410692edfc486821256d898544b48d4c43d84
 
 # Make sure that /output directory exists
 if [[ ! -d "${OUTPUT_DIR}" ]]
@@ -45,6 +49,7 @@ fi
 ls -Rl ${INPUT_DIR}
 ls -al
 
+<<<<<<< HEAD
 # Get file parts for MPRAGE
 MPRAGE_BASENAME=$(basename "${mprageFile}" .nii.gz)
 MPRAGE_BET="${OUTPUT_DIR}"/"${MPRAGE_BASENAME}_bet.nii.gz"
@@ -56,6 +61,12 @@ bet2 "${mprageFile}" "${MPRAGE_BET}"
 #config_hyperCO2="$(parse_config 'hyperCO2')"
 #if [[ $config_hyperCO2 == 'false' ]]; then hyperCO2_flag='0'; else hyperCO2_flag='1'; fi
 #config_stimulus_start="$(parse_config 'stimulus_start')"
+=======
+# Arg parsing
+config_hyperCO2="$(parse_config 'hyperCO2')"
+if [[ $config_hyperCO2 == 'false' ]]; then hyperCO2_flag='0'; else hyperCO2_flag='1'; fi
+config_stimulus_start="$(parse_config 'stimulus_start')"
+>>>>>>> 4d0410692edfc486821256d898544b48d4c43d84
 
 
 # Run the Matlab executable
@@ -63,6 +74,11 @@ time ${CODE_DIR}/run_full_analysis.sh "${MCR_ROOT}"\
                                       "${aslFile}"\
                                       "${m0File}"\
                                       "${mprageFile}"\
+<<<<<<< HEAD
+=======
+                                      "${hyperCO2_flag}" \
+                                      "${config_stimulus_start}" \
+>>>>>>> 4d0410692edfc486821256d898544b48d4c43d84
                                       "${OUTPUT_DIR}"
 
 # Check exit status
@@ -72,6 +88,7 @@ if [[ $exit_status != 0 ]]; then
   exit 1
 fi
 
+<<<<<<< HEAD
 # Get file parts for transit time map
 TT_MAP=$(find $OUTPUT_DIR -type f | grep tt.nii)
 #TT_DIR=$(dirname "${TT_MAP}")
@@ -98,6 +115,8 @@ for mask in ${FLYWHEEL_BASE}/territories/*.nii.gz; do
   fslmaths ${TERRITORIES_DIR}/${new_mask_name} -thrP 50 -bin ${TERRITORIES_DIR}/${new_mask_name}
 done
 
+=======
+>>>>>>> 4d0410692edfc486821256d898544b48d4c43d84
 # Get a list of the files in the output directory
 outputs=$(find $OUTPUT_DIR/* -maxdepth 0 -type f)
 
@@ -106,6 +125,7 @@ if [[ -z $outputs ]]; then
   echo "$CONTAINER  No results found in output directory... Exiting"
   exit 1
 else
+<<<<<<< HEAD
   WARPS_DIR="${OUTPUT_DIR}/warp_files"
   mkdir ${WARPS_DIR}
   mv *.nii.gz "${WARPS_DIR}/"
@@ -115,6 +135,14 @@ else
   zip -r warp_files.zip warp_files
   rm -rf MPRAGE ASL M0 ${TERRITORIES_DIR} # remove the intermediate directories. just keep the derived maps
   rm -rf ${WARPS_DIR}
+=======
+  cd $OUTPUT_DIR
+  mkdir results
+  cp * results/
+  zip -r results.zip results
+  rm -rf results
+  rm -rf MPRAGE ASL M0 # remove the intermediate directories. just keep the derived maps
+>>>>>>> 4d0410692edfc486821256d898544b48d4c43d84
   echo -e "$CONTAINER  Wrote: `ls`"
   echo -e "$CONTAINER  Done!"
 fi
