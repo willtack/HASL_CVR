@@ -1,6 +1,7 @@
 FROM ubuntu:16.04
 MAINTAINER Will Tackett <william.tackett@pennmedicine.upenn.edu>
 
+<<<<<<< HEAD
 
 # Prepare environment
 RUN apt-get update && \
@@ -80,6 +81,11 @@ ENV FSLDIR=/usr/share/fsl/5.0 \
 
 #ENV PATH="${FSLDIR}/bin:$PATH"
 #ENV FSLOUTPUTTYPE="NIFTI_GZ"
+=======
+# Update
+RUN apt-get update
+RUN apt-get install wget -y
+>>>>>>> 4d0410692edfc486821256d898544b48d4c43d84
 
 # Install zip and jq
 RUN apt-get install zip unzip -y
@@ -105,10 +111,13 @@ RUN chmod +x ${FLYWHEEL}/*
 # Change permissions
 RUN chmod 777 /
 
+<<<<<<< HEAD
 # ENV preservation for Flywheel Engine
 RUN env -u HOSTNAME -u PWD | \
   awk -F = '{ print "export " $1 "=\"" $2 "\"" }' > ${FLYWHEEL}/docker-env.sh
 RUN chmod +x ${FLYWHEEL}/docker-env.sh
 
+=======
+>>>>>>> 4d0410692edfc486821256d898544b48d4c43d84
 # Configure entrypoints-
 ENTRYPOINT ["/flywheel/v0/run"]
