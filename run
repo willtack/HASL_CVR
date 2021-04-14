@@ -46,11 +46,11 @@ ls -Rl ${INPUT_DIR}
 ls -al
 
 # Get file parts for MPRAGE
-MPRAGE_BASENAME=$(basename "${mprageFile}" .nii.gz)
-MPRAGE_BET="${OUTPUT_DIR}"/"${MPRAGE_BASENAME}_bet.nii.gz"
-
-# extract brain
-bet2 "${mprageFile}" "${MPRAGE_BET}"
+# MPRAGE_BASENAME=$(basename "${mprageFile}" .nii.gz)
+# MPRAGE_BET="${OUTPUT_DIR}"/"${MPRAGE_BASENAME}_bet.nii.gz"
+#
+# # extract brain
+# bet2 "${mprageFile}" "${MPRAGE_BET}"
 
 
 # Run the Matlab executable
