@@ -47,10 +47,10 @@ ls -al
 
 # Get file parts for MPRAGE
 # MPRAGE_BASENAME=$(basename "${mprageFile}" .nii.gz)
-# MPRAGE_BET="${OUTPUT_DIR}"/"${MPRAGE_BASENAME}_bet.nii.gz"
+# mprageFile="${OUTPUT_DIR}"/"${MPRAGE_BASENAME}_bet.nii.gz"
 #
 # # extract brain
-# bet2 "${mprageFile}" "${MPRAGE_BET}"
+# bet2 "${mprageFile}" "${mprageFile}"
 
 
 # Run the Matlab executable
@@ -67,15 +67,20 @@ if [[ $exit_status != 0 ]]; then
   exit 1
 fi
 
-# Get file parts for transit time map
-TT_MAP=$(find $OUTPUT_DIR -type f | grep tt.nii)
-#TT_DIR=$(dirname "${TT_MAP}")
-TT_BASENAME=$(basename "${TT_MAP}" .nii)
-TT_MNI="${OUTPUT_DIR}"/"${TT_BASENAME}_mni.nii"
+# Rename output files
+FILE_PREFIX="$(parse_config 'file_prefix')"
+TT_MAP_ORIG=$(find $OUTPUT_DIR -type f | grep tt.nii)
+TT_MAP="${OUTPUT_DIR}"/"${FILE_PREFIX}_tt.nii"
+TT_MNI="${OUTPUT_DIR}"/"${FILE_PREFIX}_MNI152_tt.nii"
+CBF_FILE="${OUTPUT_DIR}"/"${FILE_PREFIX}_cbf.nii"
+TTCBF_FILE="${OUTPUT_DIR}"/"${FILE_PREFIX}_ttcbf.nii"
+mv $TT_MAP_ORIG $TT_MAP
+mv $(find $OUTPUT_DIR -type f | grep -v tt | grep cbf.nii) $CBF_FILE
+mv $(find $OUTPUT_DIR -type f | grep ttcbf.nii) $TTCBF_FILE
 
 # Register TT map to MNI152 via MPRAGE scan
-flirt -ref "${MPRAGE_BET}" -in "${TT_MAP}" -omat $(pwd)/tt2struc.mat
-flirt -ref ${FSLDIR}/data/standard/MNI152_T1_2mm_brain -in "${MPRAGE_BET}" -omat $(pwd)/struc2mni_affine.mat
+flirt -ref "${mprageFile}" -in "${TT_MAP}" -omat $(pwd)/tt2struc.mat
+flirt -ref ${FSLDIR}/data/standard/MNI152_T1_2mm_brain -in "${mprageFile}" -omat $(pwd)/struc2mni_affine.mat
 fnirt --in="${mprageFile}" --aff=struc2mni_affine.mat --cout=struc2standard_warp --config=T1_2_MNI152_2mm
 applywarp --ref=${FSLDIR}/data/standard/MNI152_T1_2mm.nii.gz --in=${TT_MAP} --warp=struc2standard_warp \
           --premat=tt2struc.mat --out=${TT_MNI}
@@ -89,7 +94,7 @@ mkdir "${TERRITORIES_DIR}"
 
 # Apply warps to every mask
 for mask in ${FLYWHEEL_BASE}/territories/*.nii.gz; do
-  new_mask_name="$(basename ${mask} .nii.gz)_native.nii.gz"
+  new_mask_name="${FILE_PREFIX}_$(basename ${mask} .nii.gz)_native.nii.gz"
   applywarp --ref="${TT_MAP}" --in="${mask}" --warp=struc2standard_warp_inv --postmat=struc2tt.mat --out=${TERRITORIES_DIR}/${new_mask_name}
   fslmaths ${TERRITORIES_DIR}/${new_mask_name} -thrP 50 -bin ${TERRITORIES_DIR}/${new_mask_name}
 done
