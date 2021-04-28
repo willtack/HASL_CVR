@@ -46,18 +46,18 @@ ls -Rl ${INPUT_DIR}
 ls -al
 
 # Get file parts for MPRAGE
-# MPRAGE_BASENAME=$(basename "${mprageFile}" .nii.gz)
-# mprageFile="${OUTPUT_DIR}"/"${MPRAGE_BASENAME}_bet.nii.gz"
-#
-# # extract brain
-# bet2 "${mprageFile}" "${mprageFile}"
+FILE_PREFIX="$(parse_config 'file_prefix')"
+mprageFileBet="${OUTPUT_DIR}"/"${FILE_PREFIX}_mprage_bet.nii.gz"
+
+# extract brain
+bet2 "${mprageFile}" "${mprageFileBet}" -v -f 0.5 -g 0
 
 
 # Run the Matlab executable
 time ${CODE_DIR}/run_full_analysis.sh "${MCR_ROOT}"\
                                       "${aslFile}"\
                                       "${m0File}"\
-                                      "${mprageFile}"\
+                                      "${mprageFileBet}"\
                                       "${OUTPUT_DIR}"
 
 # Check exit status
@@ -68,7 +68,6 @@ if [[ $exit_status != 0 ]]; then
 fi
 
 # Rename output files
-FILE_PREFIX="$(parse_config 'file_prefix')"
 TT_MAP_ORIG=$(find $OUTPUT_DIR -type f | grep tt.nii)
 TT_MAP="${OUTPUT_DIR}"/"${FILE_PREFIX}_tt.nii"
 TT_MNI="${OUTPUT_DIR}"/"${FILE_PREFIX}_MNI152_tt.nii"
@@ -79,8 +78,8 @@ mv $(find $OUTPUT_DIR -type f | grep -v tt | grep cbf.nii) $CBF_FILE
 mv $(find $OUTPUT_DIR -type f | grep ttcbf.nii) $TTCBF_FILE
 
 # Register TT map to MNI152 via MPRAGE scan
-flirt -ref "${mprageFile}" -in "${TT_MAP}" -omat $(pwd)/tt2struc.mat
-flirt -ref ${FSLDIR}/data/standard/MNI152_T1_2mm_brain -in "${mprageFile}" -omat $(pwd)/struc2mni_affine.mat
+flirt -ref "${mprageFileBet}" -in "${TT_MAP}" -omat $(pwd)/tt2struc.mat
+flirt -ref ${FSLDIR}/data/standard/MNI152_T1_2mm_brain -in "${mprageFileBet}" -omat $(pwd)/struc2mni_affine.mat
 fnirt --in="${mprageFile}" --aff=struc2mni_affine.mat --cout=struc2standard_warp --config=T1_2_MNI152_2mm
 applywarp --ref=${FSLDIR}/data/standard/MNI152_T1_2mm.nii.gz --in=${TT_MAP} --warp=struc2standard_warp \
           --premat=tt2struc.mat --out=${TT_MNI}
@@ -99,6 +98,18 @@ for mask in ${FLYWHEEL_BASE}/territories/*.nii.gz; do
   fslmaths ${TERRITORIES_DIR}/${new_mask_name} -thrP 50 -bin ${TERRITORIES_DIR}/${new_mask_name}
 done
 
+# segment mprage to create gray and white matter masks
+fast --segments -v -o "${FILE_PREFIX}" ${mprageFileBet}
+gmSeg=$(find . -type f | grep _seg_1)
+wmSeg=$(find . -type f | grep _seg_2)
+for x in /flywheel/v0/*_seg*.nii.gz; do
+  basename=$(basename $x .nii.gz)
+  output="${TERRITORIES_DIR}"/${basename}_native.nii.gz
+  flirt -in $x -ref ${TT_MAP} -applyxfm -init struc2tt.mat -out $output
+  fslmaths $output -thrP 50 -bin $output
+  # cp $output ${TERRITORIES_DIR}/
+done
+
 # Get a list of the files in the output directory
 outputs=$(find $OUTPUT_DIR/* -maxdepth 0 -type f)
 
@@ -109,11 +120,11 @@ if [[ -z $outputs ]]; then
 else
   WARPS_DIR="${OUTPUT_DIR}/warp_files"
   mkdir ${WARPS_DIR}
-  mv *.nii.gz "${WARPS_DIR}/"
+  mv struc2standard*.nii.gz "${WARPS_DIR}/"
   mv *.mat "${WARPS_DIR}/"
   cd $OUTPUT_DIR
-  zip -r vascular_territories.zip vascular_territories
-  zip -r warp_files.zip warp_files
+  pushd vascular_territories; zip -r ../"${FILE_PREFIX}"_vascular_territories.zip *; popd
+  pushd warp_files; zip -r ../"${FILE_PREFIX}"_warp_files.zip *; popd
   rm -rf MPRAGE ASL M0 ${TERRITORIES_DIR} # remove the intermediate directories. just keep the derived maps
   rm -rf ${WARPS_DIR}
 
