@@ -68,20 +68,23 @@ if [[ $exit_status != 0 ]]; then
 fi
 
 # Rename output files
-TT_MAP_ORIG=$(find $OUTPUT_DIR -type f | grep tt.nii)
-TT_MAP="${OUTPUT_DIR}"/"${FILE_PREFIX}_tt.nii"
+TT_FILE_ORIG=$(find $OUTPUT_DIR -type f | grep tt.nii)
+TT_FILE="${OUTPUT_DIR}"/"${FILE_PREFIX}_tt.nii"
 TT_MNI="${OUTPUT_DIR}"/"${FILE_PREFIX}_MNI152_tt.nii"
 CBF_FILE="${OUTPUT_DIR}"/"${FILE_PREFIX}_cbf.nii"
 TTCBF_FILE="${OUTPUT_DIR}"/"${FILE_PREFIX}_ttcbf.nii"
-mv $TT_MAP_ORIG $TT_MAP
+PW_FILE="${OUTPUT_DIR}"/"${FILE_PREFIX}_pw.nii"
+mv $TT_FILE_ORIG $TT_FILE
 mv $(find $OUTPUT_DIR -type f | grep -v tt | grep cbf.nii) $CBF_FILE
 mv $(find $OUTPUT_DIR -type f | grep ttcbf.nii) $TTCBF_FILE
+mv $(find $OUTPUT_DIR -type f | grep pw.nii) $PW_FILE
+
 
 # Register TT map to MNI152 via MPRAGE scan
-flirt -ref "${mprageFileBet}" -in "${TT_MAP}" -omat $(pwd)/tt2struc.mat
+flirt -ref "${mprageFileBet}" -in "${TT_FILE}" -omat $(pwd)/tt2struc.mat
 flirt -ref ${FSLDIR}/data/standard/MNI152_T1_2mm_brain -in "${mprageFileBet}" -omat $(pwd)/struc2mni_affine.mat
 fnirt --in="${mprageFile}" --aff=struc2mni_affine.mat --cout=struc2standard_warp --config=T1_2_MNI152_2mm
-applywarp --ref=${FSLDIR}/data/standard/MNI152_T1_2mm.nii.gz --in=${TT_MAP} --warp=struc2standard_warp \
+applywarp --ref=${FSLDIR}/data/standard/MNI152_T1_2mm.nii.gz --in=${TT_FILE} --warp=struc2standard_warp \
           --premat=tt2struc.mat --out=${TT_MNI}
 
 # Invert warps to bring vascular territory masks into same space as transit time map
@@ -94,7 +97,7 @@ mkdir "${TERRITORIES_DIR}"
 # Apply warps to every mask
 for mask in ${FLYWHEEL_BASE}/territories/*.nii.gz; do
   new_mask_name="${FILE_PREFIX}_$(basename ${mask} .nii.gz)_native.nii.gz"
-  applywarp --ref="${TT_MAP}" --in="${mask}" --warp=struc2standard_warp_inv --postmat=struc2tt.mat --out=${TERRITORIES_DIR}/${new_mask_name}
+  applywarp --ref="${TT_FILE}" --in="${mask}" --warp=struc2standard_warp_inv --postmat=struc2tt.mat --out=${TERRITORIES_DIR}/${new_mask_name}
   fslmaths ${TERRITORIES_DIR}/${new_mask_name} -thrP 50 -bin ${TERRITORIES_DIR}/${new_mask_name}
 done
 
@@ -105,10 +108,26 @@ wmSeg=$(find . -type f | grep _seg_2)
 for x in /flywheel/v0/*_seg*.nii.gz; do
   basename=$(basename $x .nii.gz)
   output="${TERRITORIES_DIR}"/${basename}_native.nii.gz
-  flirt -in $x -ref ${TT_MAP} -applyxfm -init struc2tt.mat -out $output
+  flirt -in $x -ref ${TT_FILE} -applyxfm -init struc2tt.mat -out $output
   fslmaths $output -thrP 50 -bin $output
   # cp $output ${TERRITORIES_DIR}/
 done
+
+# split perfusion weighted image and create deltaM/M0 images
+deltaM_DIR="${OUTPUT_DIR}/deltaM"
+mkdir "${deltaM_DIR}"
+fslsplit $PW_FILE "${deltaM_DIR}/${FILE_PREFIX}_deltaM_"
+for x in /flywheel/v0/output/deltaM/*; do
+  basename=$(basename $x .nii.gz)
+  fslmaths "${x}" -div "${m0File}" "${deltaM_DIR}/${basename}_dMM0"
+done
+rename 's/0007/control/' "${deltaM_DIR}/*.nii.gz"
+
+# warp file stuff
+WARPS_DIR="${OUTPUT_DIR}/warp_files"
+mkdir ${WARPS_DIR}
+mv struc2standard*.nii.gz "${WARPS_DIR}/"
+mv *.mat "${WARPS_DIR}/"
 
 # Get a list of the files in the output directory
 outputs=$(find $OUTPUT_DIR/* -maxdepth 0 -type f)
@@ -118,15 +137,13 @@ if [[ -z $outputs ]]; then
   echo "$CONTAINER  No results found in output directory... Exiting"
   exit 1
 else
-  WARPS_DIR="${OUTPUT_DIR}/warp_files"
-  mkdir ${WARPS_DIR}
-  mv struc2standard*.nii.gz "${WARPS_DIR}/"
-  mv *.mat "${WARPS_DIR}/"
   cd $OUTPUT_DIR
+  pushd deltaM; zip -r ../"${FILE_PREFIX}"_deltaM.zip *; popd
   pushd vascular_territories; zip -r ../"${FILE_PREFIX}"_vascular_territories.zip *; popd
   pushd warp_files; zip -r ../"${FILE_PREFIX}"_warp_files.zip *; popd
   rm -rf MPRAGE ASL M0 ${TERRITORIES_DIR} # remove the intermediate directories. just keep the derived maps
   rm -rf ${WARPS_DIR}
+  rm -rf ${deltaM_DIR}
 
   echo -e "$CONTAINER  Wrote: `ls`"
   echo -e "$CONTAINER  Done!"
