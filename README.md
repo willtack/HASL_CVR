@@ -1,6 +1,5 @@
 CVR Hadamard-encoded multi-delay ASL data(HASL) postprocessing pipeline
 
-Through this pipeline you can get the CBF, Transit time(TT) and transit time corrected CBF(ttcCBF) in Baseline and HyperCO2 states as well as change and change% for CBF, TT and ttcCBF.
 
 Step1 is mainly the preprocessing: realign, coregistration, create brainmask. You need to eliminate non-brain tissues on structural image before running this script. 
 Step2 is HASL quantification and CVR measurement.
