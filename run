@@ -19,10 +19,10 @@ function parse_config {
 
 # Built to flywheel-v0 spec.
 FLYWHEEL_BASE=/flywheel/v0
-MCR_ROOT=/usr/local/MATLAB/MATLAB_Runtime/v96/  # double check this
+MCR_ROOT=/usr/local/MATLAB/MATLAB_Runtime/v97/  # double check this
 INPUT_DIR=${FLYWHEEL_BASE}/input
 OUTPUT_DIR=${FLYWHEEL_BASE}/output
-CODE_DIR=${FLYWHEEL_BASE}/app/for_redistribution_files_only
+CODE_DIR=${FLYWHEEL_BASE}/app/full_analysis/07/for_redistribution_files_only
 
 # Make sure that /output directory exists
 if [[ ! -d "${OUTPUT_DIR}" ]]

@@ -119,7 +119,7 @@ m0_path = nii_phase_extract(hasl_m0_path, 'M0', 1);
 asl_para = auxil_asl_para_init();
 
 asl_para.LD = 3.5;
-asl_para.PLD = 1;
+asl_para.PLD = 0.7;
 asl_para.PLD_Num = 7;
 asl_para.PLD_Lin = 0.5;
 asl_para.T1b = 1.65;
