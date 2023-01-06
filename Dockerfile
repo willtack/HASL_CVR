@@ -89,8 +89,8 @@ ENV FLYWHEEL /flywheel/v0
 RUN mkdir -p ${FLYWHEEL}
 RUN mkdir -p ${FLYWHEEL}/opt
 
-# Install MCR. Install path: usr/local/MATLAB/MATLAB_Runtime/v96
-RUN wget -O opt/mcr.zip http://ssd.mathworks.com/supportfiles/downloads/R2019a/Release/0/deployment_files/installer/complete/glnxa64/MATLAB_Runtime_R2019a_glnxa64.zip
+# Install MCR. Install path: usr/local/MATLAB/MATLAB_Runtime/v97
+RUN wget -O opt/mcr.zip http://ssd.mathworks.com/supportfiles/downloads/R2019b/Release/0/deployment_files/installer/complete/glnxa64/MATLAB_Runtime_R2019b_glnxa64.zip
 RUN unzip opt/mcr.zip -d opt/
 RUN opt/install -mode silent -agreeToLicense yes
 
