@@ -22,7 +22,11 @@ FLYWHEEL_BASE=/flywheel/v0
 MCR_ROOT=/usr/local/MATLAB/MATLAB_Runtime/v97/  # double check this
 INPUT_DIR=${FLYWHEEL_BASE}/input
 OUTPUT_DIR=${FLYWHEEL_BASE}/output
+<<<<<<< HEAD
 CODE_DIR=${FLYWHEEL_BASE}/app/full_analysis07/for_redistribution_files_only
+=======
+CODE_DIR=${FLYWHEEL_BASE}/app/full_analysis/07/for_redistribution_files_only
+>>>>>>> 630c740238ca16a934912e38ddf7c544d67eb3c2
 
 # Make sure that /output directory exists
 if [[ ! -d "${OUTPUT_DIR}" ]]
