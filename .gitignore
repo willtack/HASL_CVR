@@ -14,3 +14,7 @@ full_analysis.prj
 build_and_deploy.sh
 app_old/for_testing/full_analysis
 bfg-1.13.1.jar
+app/old/
+full_analysis07
+app/full_analysis07/for_redistribution_files_only/full_analysis
+app/full_analysis07.zip

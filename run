@@ -22,7 +22,7 @@ FLYWHEEL_BASE=/flywheel/v0
 MCR_ROOT=/usr/local/MATLAB/MATLAB_Runtime/v97/  # double check this
 INPUT_DIR=${FLYWHEEL_BASE}/input
 OUTPUT_DIR=${FLYWHEEL_BASE}/output
-CODE_DIR=${FLYWHEEL_BASE}/app/full_analysis/07/for_redistribution_files_only
+CODE_DIR=${FLYWHEEL_BASE}/app/full_analysis07/for_redistribution_files_only
 
 # Make sure that /output directory exists
 if [[ ! -d "${OUTPUT_DIR}" ]]
@@ -54,6 +54,8 @@ bet2 "${mprageFile}" "${mprageFileBet}" -v -f 0.5 -g 0
 
 
 # Run the Matlab executable
+chmod +x ${CODE_DIR}/run_full_analysis.sh
+chmod +x ${CODE_DIR}/full_analysis
 time ${CODE_DIR}/run_full_analysis.sh "${MCR_ROOT}"\
                                       "${aslFile}"\
                                       "${m0File}"\

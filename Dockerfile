@@ -89,10 +89,10 @@ ENV FLYWHEEL /flywheel/v0
 RUN mkdir -p ${FLYWHEEL}
 RUN mkdir -p ${FLYWHEEL}/opt
 
-# Install MCR. Install path: usr/local/MATLAB/MATLAB_Runtime/v97
-RUN wget -O opt/mcr.zip http://ssd.mathworks.com/supportfiles/downloads/R2019b/Release/0/deployment_files/installer/complete/glnxa64/MATLAB_Runtime_R2019b_glnxa64.zip
-RUN unzip opt/mcr.zip -d opt/
-RUN opt/install -mode silent -agreeToLicense yes
+# Install MCR. Install path: /usr/local/MATLAB/MATLAB_Runtime/v97
+RUN wget -O /opt/mcr.zip http://ssd.mathworks.com/supportfiles/downloads/R2019b/Release/0/deployment_files/installer/complete/glnxa64/MATLAB_Runtime_R2019b_glnxa64.zip
+RUN unzip /opt/mcr.zip -d /opt/
+RUN /opt/install -mode silent -agreeToLicense yes
 
 # Install libs
 RUN apt-get -y install libxmu6
@@ -102,7 +102,9 @@ COPY . /flywheel/v0/
 RUN chmod +x ${FLYWHEEL}/*
 
 # Change permissions
-RUN chmod 777 /
+#RUN chmod 777 /
+RUN chmod 777 ${FLYWHEEL}/app/full_analysis07/for_redistribution_files_only/run_full_analysis.sh
+RUN chmod 777 ${FLYWHEEL}/app/full_analysis07/for_redistribution_files_only/full_analysis
 
 # ENV preservation for Flywheel Engine
 RUN env -u HOSTNAME -u PWD | \

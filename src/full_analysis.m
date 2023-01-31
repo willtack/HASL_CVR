@@ -119,7 +119,7 @@ m0_path = nii_phase_extract(hasl_m0_path, 'M0', 1);
 asl_para = auxil_asl_para_init();
 
 asl_para.LD = 3.5;
-asl_para.PLD = 0.7;
+asl_para.PLD = 1.0;
 asl_para.PLD_Num = 7;
 asl_para.PLD_Lin = 0.5;
 asl_para.T1b = 1.65;
@@ -171,7 +171,24 @@ save_nii(nii, fullfile(subj_folder, 'cbf.nii'));
 
 nii.hdr.dime.dim(5)=1;
 nii.img = ttccbf_img(:,:,:,4);
-save_nii(nii, fullfile(subj_folder, 'ttcbf.nii'));
+save_nii(nii, fullfile(subj_folder, 'ttcbf4.nii'));
+
+nii.hdr.dime.dim(5)=1;
+nii.img = ttccbf_img(:,:,:,1);
+save_nii(nii, fullfile(subj_folder, 'ttcbf1.nii'));
+
+nii.hdr.dime.dim(5)=1;
+nii.img = ttccbf_img(:,:,:,6);
+save_nii(nii, fullfile(subj_folder, 'ttcbf6.nii'));
+
+nii.hdr.dime.dim(5)=1;
+nii.img = ttccbf_img(:,:,:,7);
+save_nii(nii, fullfile(subj_folder, 'ttcbf7.nii'));
+
+nii.hdr.dime.dim(5)=1;
+nii.img = ttccbf_img(:,:,:,7);
+save_nii(nii, fullfile(subj_folder, 'ttcbf8.nii'));
+
 
 tt_img = tt_img.*1000; % *1000:change unit from 's' to 'ms'
 nii.hdr.dime.dim(5)=1;
